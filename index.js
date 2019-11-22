@@ -46,6 +46,43 @@ mqttClient.on('connect', () => {
 
 });
 
+let mqttClient_1 = mqtt.connect('ws://mqtt.devbit.be');
+
+// Mqtt error calback
+mqttClient_1.on('error', (err) => {
+  console.log(err);
+  mqttClient.end();
+});
+
+mqttClient_1.on('connect', () => {
+  console.log(`mqtt client connected`);
+  // Routes
+
+  // mqtt subscriptions
+  mqttClient_1.subscribe('wifi-counter/0265', { qos: 0 });
+
+  // When a message arrives, console.log it
+
+  mqttClient_1.on('close', () => {
+    console.log(`mqtt client disconnected`);
+  });
+
+  setInterval(
+    function () {
+      mqttClient_1.on('message', function (topic, message) {
+        console.log(message.toString());
+        toastjemezalm = JSON.parse(message);
+
+
+
+      }.bind(this),
+        1000
+      );
+
+    });
+
+});
+
 app.get("/willy", function (req, res) {
   res.setHeader('content-type', 'text/javascript');
   res.send(JSON.stringify(orvalleke));
@@ -54,9 +91,8 @@ app.get("/willy", function (req, res) {
 
 
 app.get("/marjet", function (req, res) {
-  res.send(
-    { walput: "walput" }
-  );
+  res.setHeader('content-type', 'text/javascript');
+  res.send(JSON.stringify(toastjemezalm));
 });
 
 var server = app.listen(process.env.PORT || 3000, function () {
