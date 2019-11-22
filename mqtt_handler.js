@@ -41,11 +41,6 @@ class MqttHandler {
     sendMessage(message) {
         this.mqttClient.publish('/WaYa', message);
     }
-
-    // Get a mqtt message to topic: mytopic
-    getMessage() {
-        this.mqttClient.subscribe('/WaYa');
-    }
 }
 
 module.exports = MqttHandler;

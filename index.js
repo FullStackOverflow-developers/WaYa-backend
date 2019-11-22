@@ -1,23 +1,59 @@
 var express = require("express");
+var mqtt = require("mqtt");
 var bodyParser = require("body-parser");
 var app = express();
-var mqttHandler = require('./mqtt_handler');
+
+let orvalleke = "";
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }))
 
-var mqttClient = new mqttHandler();
-mqttClient.connect();
 
-// Routes
+let mqttClient = mqtt.connect('ws://mqtt.devbit.be');
+
+// Mqtt error calback
+mqttClient.on('error', (err) => {
+  console.log(err);
+  mqttClient.end();
+});
+
+mqttClient.on('connect', () => {
+  console.log(`mqtt client connected`);
+  // Routes
+
+  // mqtt subscriptions
+  mqttClient.subscribe('/wifi-counter/0285', { qos: 0 });
+
+  // When a message arrives, console.log it
+
+  mqttClient.on('close', () => {
+    console.log(`mqtt client disconnected`);
+  });
+
+  setInterval(
+    function () {
+      mqttClient.on('message', function (topic, message) {
+        console.log(message.toString());
+        orvalleke = message.toString();
+
+
+
+      }.bind(this),
+        1000
+      );
+
+    });
+
+});
+
+
+
 app.get("/willy", function (req, res) {
-  res.status(200).send(
-    { fazant: "fazant" }
-  );
+  res.send({ data: orvalleke });
 });
 
 app.get("/marjet", function (req, res) {
-  res.status(200).send(
+  res.send(
     { walput: "walput" }
   );
 });
