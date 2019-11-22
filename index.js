@@ -11,14 +11,12 @@ mqttClient.connect();
 
 // Routes
 app.get("/willy", function (req, res) {
-  mqttClient.sendMessage(req.body.message);
   res.status(200).send(
     { fazant: "fazant" }
   );
 });
 
 app.get("/marjet", function (req, res) {
-  mqttClient.sendMessage(req.body.message);
   res.status(200).send(
     { walput: "walput" }
   );
