@@ -22,7 +22,7 @@ mqttClient.on('connect', () => {
   // Routes
 
   // mqtt subscriptions
-  mqttClient.subscribe('/wifi-counter/0285', { qos: 0 });
+  mqttClient.subscribe('wifi-counter/0285', { qos: 0 });
 
   // When a message arrives, console.log it
 
@@ -34,7 +34,7 @@ mqttClient.on('connect', () => {
     function () {
       mqttClient.on('message', function (topic, message) {
         console.log(message.toString());
-        orvalleke = message.toString();
+        orvalleke = JSON.parse(message);
 
 
 
@@ -46,11 +46,12 @@ mqttClient.on('connect', () => {
 
 });
 
-
-
 app.get("/willy", function (req, res) {
-  res.send({ data: orvalleke });
+  res.setHeader('content-type', 'text/javascript');
+  res.send(JSON.stringify(orvalleke));
 });
+
+
 
 app.get("/marjet", function (req, res) {
   res.send(
